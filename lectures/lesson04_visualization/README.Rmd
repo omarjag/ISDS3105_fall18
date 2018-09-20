@@ -58,13 +58,15 @@ The [concept of _mapping_](http://r4ds.had.co.nz/data-visualisation.html#aesthet
 
 ```{r, eval=FALSE}
 ggplot() +
-  geom_col(data =  twitter_users, aes(x = Year, y = millions, ------ ))
+  geom_col(data =  twitter_users, aes(x = Year, y = millions, fill = factor(Year)))
 ```
 
 From `freqCasualties`, plot a barchart of the count of casualties by class and gender (each bar refers to a class)
 
 ```{r}
 #what do we want to map to x and y? how do we map the third variable?
+ggplot() +
+  geom_col(data =  freqCasualties, aes(x = class, y = n, fill = factor(gender)))
 ```
 
 
@@ -85,12 +87,16 @@ So far, we specified aesthetics and datasets inside a specific geom. However, if
 #Use the dataset twitter_users
 #Use the set of aesthetics: aes(x = Year, y = millions )
 #combine together geom_line() and geom_point() 
+ggplot() +
+  geom_line(data =  twitter_users, aes(x = Year, y = millions, color = 'green')) + geom_point(data =  twitter_users, aes(x = Year, y = millions, color = 'blue'))
 ```
 
 
 ```{r}
 #use twitter_users to plot a linechart of twitter users over time
 #use sn_users to overlay a linechart of FB users over time
+ggplot() +
+  geom_line(data =  twitter_users, aes(x = Year, y = millions, color = 'green')) + geom_line(data =  sn_users, aes(x = year, y = facebook, color = 'blue'))
 ```
 
 
@@ -98,6 +104,12 @@ So far, we specified aesthetics and datasets inside a specific geom. However, if
 ###Exercise: 
 
  - use `beerDt` to create a linechart of beer consumption (in gallons of ethanol) in US from 1903.
+```{r}
+ggplot() +
+  geom_line(data =  beerDt, aes(x = Year, y = GallonsCapita, color = 'green'))+
+  geom_point(data =  beerDt, aes(x = Year, y = GallonsCapita, color = 'red'))
+```
+ 
  - add a layer of points using `geom_point`
  
  Suppose that you now want to flag (e.g., use a different color) the observation for consumption in your birthyear. We can do it in two steps:
