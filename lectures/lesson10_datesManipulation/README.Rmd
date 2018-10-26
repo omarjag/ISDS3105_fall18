@@ -108,6 +108,15 @@ second(datime)
 #. Calculate the day of the week with the most crimes 
 
 ```{r}
+dt %>%
+ mutate(fulldate = paste(offensedate,offensetime)) %>%
+ mutate(weekday = wday(fulldate, label = T, abbr = F)) %>%
+ select(fulldate, weekday) %>%
+ count(weekday) %>%
+ arrange(desc(weekday))
+```
+
+```{r}
 load(here::here('data', 'dataset.RData'))
 dt <- left_join(dt, lkt)
 ```
@@ -120,7 +129,12 @@ dt <- left_join(dt, lkt)
    - >10.30 am but < 2.00 pm -----> day
    - >=2.00 am but < 5.30 pm -----> afternoon
    - anything else ---> evening
+   
 ```
+```{r}
+dt %>% case_when(offensetime_discrete == night ~ '>= 10.00pm but <= 5.00 am', offensetime_discrete == morning ~ '>5.00am but <= 10.30am', offensetime_discrete == day ~ '>10.30am but < 2.00pm', offensetime_discrete == afternoon ~ '>=2.00pm but < 5.30 pm', offensetime_discrete == evening ~ 'anything else')
+```
+
 
 
 #. Plot the density of crimes facetting by year. Make sure each facet goes from Jan to Dec of that year only, and the x-axis shows one label for each month

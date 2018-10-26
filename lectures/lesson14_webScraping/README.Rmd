@@ -147,7 +147,9 @@ companyPage %>% html_node('span.cmp-header-rating-average') %>% html_text()
 ## Exercise
 
 ```{r}
-tempUrl <- 'https://www.usclimatedata.com/climate/baton-rouge/louisiana/united-states/usla0033' 
+tempUrl <- 'https://www.usclimatedata.com/climate/baton-rouge/louisiana/united-states/usla0033'
+session <- html_session(tempUrl)
+
 ```
 
 We want to collect temperature data for Baton Rouge from `tempUrl` for 2016-2017. The output is gonna be a tibble with: Day, High Temperature, Low Temperature, Precipitation, Snow, Snowdepth.
