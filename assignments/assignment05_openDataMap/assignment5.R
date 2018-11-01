@@ -83,10 +83,8 @@ dt_LOOT <- dt_LOOT %>%
 #' on the left menu select: credentials > create credentials > API key
 #' the API key goes in:
 
-ggmap::register_google(key = googleAPIkey)
+brMap <- readRDS(here::here('data/mapTerrainBR.RDS'))
 
-#Use get_map to query the Google API (we use the LSU coordinate)
-brMap <- ggmap::get_map(location = c( lon = -91.1500, lat = 30.5000),  zoom = 10, maptype = 'toner') 
 
 #' In case you cannot connect to the API, I saved for you the object brMap to data/mapTerrainBR.RDS
 #' brMap <- readRDS(here::here('data/mapTerrainBR.RDS')) 
@@ -101,24 +99,6 @@ ggmap::ggmap(brMap) +
   ggtitle('Emergency Calls')
 
 
-
-######################################
-####    Layer of inundate areas  #####
-######################################
-library(rgdal)
-library(ggpolypath)
-shpFile <- here('data/Estimated_Flood_Inundation_Area/Estimated_Flood_Inundation_Area.shp')
-indundationArea <- readOGR(shpFile)
-ogrInfo(shpFile)
-indundationArea <- spTransform(indundationArea, CRS("+proj=longlat +datum=WGS84"))
-indundationArea <- fortify(indundationArea)
-
-m <- ggmap::ggmap(brMap) +  
-  geom_polypath(data = indundationArea, aes(x = long, y = lat, group=group), fill = 'blue', alpha=.2) 
-
-#' It can take a while to load the map in the viewer. 
-#' You might want to save it as .png to retrieve them faster:
-ggsave('mapEmergencyCalls.png', m, path = here('assignments/assignments05_openDataMap/'))
 
 
 

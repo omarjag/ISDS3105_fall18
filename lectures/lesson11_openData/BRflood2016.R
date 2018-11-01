@@ -57,8 +57,13 @@ brMap <- ggmap::get_map(location = c( lon = -91.1500, lat = 30.5000),  zoom = 10
 
 ggmap::ggmap(brMap) +
   geom_point(data = filter(dt_311, parenttype == "DRAINAGE, EROSION, FLOODING OR HOLES"),
-             aes(x = long, y = lat), color = 'darkred', alpha = .33) +
-  ggtitle('Position of calls to 311 Baton Rouge area')
+             aes(x = long, y = lat), color = 'darkred', alpha = .33) + 
+  geom_point(data = filter(dt_fire, inci_descript == "Severe weather or natural disaster, Other" | inci_descript == "Water evacuation"),
+             aes(x = long, y = lat), color = 'yellow', alpha = .33) +
+  geom_point(data = filter(dt_911, offense_desc == "LOOTING"),
+             aes(x = long, y = lat), color = 'blue', alpha = .33) +
+  ggtitle('Emergency Calls')
+  
 
 
 ######################################
@@ -68,7 +73,10 @@ ggmap::ggmap(brMap) +
 # fire incidents endpoint
 fireIncidens <- 'https://data.brla.gov/resource/4w4d-4es6.csv?'
 query <- "$where=disp_date between '2016-08-12' and '2016-08-22'"
-
+dt_FI <- dt_FI %>% 
+  filter(geolocation != "") %>%
+  mutate(geolocation = str_extract_all(geolocation, '[-,.,0-9]+')) %>% 
+  mutate(long = as.double(map_chr(geolocation, 1)), lat = as.double(map_chr(geolocation, 2)))
 #' Task: Use read.scorata to query the API and download fire incidents records. 
 #' Filter only calls for inci_descript: 
 #' 'severe weather or natural disaster, other' OR 'water evacuation'
@@ -83,7 +91,10 @@ query <- "$where=disp_date between '2016-08-12' and '2016-08-22'"
 # police incidents endpoint
 crimeIncidents <- 'https://data.brla.gov/resource/5rji-ddnu.csv?'
 query <- "$where=offense_date between '2016-08-12' and '2016-08-22'"
-
+dt_LOOT <- dt_LOOT %>% 
+  filter(geolocation != "") %>%
+  mutate(geolocation = str_extract_all(geolocation, '[-,.,0-9]+')) %>% 
+  mutate(long = as.double(map_chr(geolocation, 1)), lat = as.double(map_chr(geolocation, 2)))
 #' Task: Use read.scorata to query the API and download police incidents records. 
 #' Filter only calls for offense_desc: 'looting'
 
@@ -106,11 +117,6 @@ m <- ggmap::ggmap(brMap) +
 #' It can take a while to load the map in the viewer. 
 #' You might want to save it as .png to retrieve them faster:
 ggsave('shapemapFlood.png', m, path = here('lectures/lesson11_openData/'))
-
-
-
-
-
 
 
 
